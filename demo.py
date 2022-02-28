@@ -11,6 +11,8 @@ from torch.nn.functional import upsample
 import networks.deeplab_resnet as resnet
 from mypath import Path
 from dataloaders import helpers as helpers
+import cv2
+import argparse
 
 modelName = 'dextr_pascal-sbd'
 pad = 50
@@ -36,7 +38,16 @@ net.eval()
 net.to(device)
 
 #  Read image and click the points
-image = np.array(Image.open('ims/dog-cat.jpg'))
+parser = argparse.ArgumentParser()
+parser.add_argument('filename', type=str,
+                    help='filename')
+filename=parser.parse_args().filename
+print(filename)
+image = np.array(Image.open(f"ims/{filename}"))
+try:
+    image.shape[2]
+except IndexError:
+    image=cv2.cvtColor(np.array(Image.open(f"ims/{filename}")),cv2.COLOR_GRAY2RGB)
 plt.ion()
 plt.axis('off')
 plt.imshow(image)
